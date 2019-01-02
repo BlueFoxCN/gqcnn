@@ -1,1 +1,1 @@
-from .config_dexnet2 import cfg
+from .config_dexnet3 import cfg

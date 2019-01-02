@@ -23,7 +23,7 @@ SAVE_DIR = 'input_images'
 
 class Data(RNGDataFlow):
     def __init__(self,
-                 filename,
+                 data_dir,
                  save_data=False,
                  test_set=False,
                  image_wise=False):
@@ -32,25 +32,26 @@ class Data(RNGDataFlow):
         self.save_data = save_data
         self.image_wise = image_wise
 
-        self.filename = filename
+        self.data_dir = data_dir
 
     def size(self):
         return cfg.train_num if not self.test_set else cfg.val_num
 
     def generate_sample(self, idx):
+        '''
         with h5py.File(self.filename, 'r') as f:
             depth_im = f['depth_im'][idx]
             depth = f['hand_depth'][idx]
             label = f['label'][idx]            
-
         '''
+        
         num_1 = idx // 1000
         num_2 = idx % 1000
-        depth_im = np.load('3dnet_kit_06_13_17/depth_ims_tf_table_%05d.npz' % num_1)['arr_0'][num_2,...]
-        depth = np.load('3dnet_kit_06_13_17/hand_poses_%05d.npz' % num_1)['arr_0'][num_2,...][2]
-        label = np.load('3dnet_kit_06_13_17/robust_ferrari_canny_%05d.npz' % num_1)['arr_0'][num_2,...]
-        label = int(label > 0.002)
-        '''
+        depth_im = np.load(self.data_dir + 'depth_ims_tf_table_%05d.npz' % num_1)['arr_0'][num_2,...]
+        depth = np.load(self.data_dir + 'hand_poses_%05d.npz' % num_1)['arr_0'][num_2,...][2]
+        angle = np.load(self.data_dir + 'hand_poses_%05d.npz' % num_1)['arr_0'][num_2,...][4]
+        label = np.load(self.data_dir + 'robust_suction_wrench_resistance_%05d.npz' % num_1)['arr_0'][num_2,...]
+        label = int(label > 0.2)
 
         add_noise = (not self.test_set) and np.random.rand() < cfg.gaussian_process_rate
             
@@ -63,7 +64,7 @@ class Data(RNGDataFlow):
         if self.save_data:
             misc.imsave(os.path.join(SAVE_DIR, '%d_%d_depth_im_%d.jpg' % (label, idx, int(add_noise))), depth_im[:,:,0])
 
-        return [depth_im, depth, label]
+        return [depth_im, depth, angle, label]
 
     def get_data(self):
         if not self.image_wise:
@@ -90,7 +91,7 @@ class Data(RNGDataFlow):
 
 if __name__ == '__main__':
 
-    ds = Data(cfg.filename, save_data=True)       
+    ds = Data(cfg.data_dir, save_data=True)       
     ds.reset_state()
 
     g = ds.get_data()

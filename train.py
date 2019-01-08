@@ -45,7 +45,7 @@ class GQCNN(ModelDesc):
         return image
 
     def _get_inputs(self):
-        return [InputDesc(tf.float32, [None, cfg.im_height, cfg.im_width, 1], 'input'), 
+        return [InputDesc(tf.float32, [None, cfg.im_height, cfg.im_width, 1], 'input'),
                 InputDesc(tf.float32, [None, 2], 'pose'),
                 InputDesc(tf.int32, [None], 'label')]
 
@@ -66,7 +66,7 @@ class GQCNN(ModelDesc):
                        .Conv2D('conv2_2', 64, 3, activation=LocalNorm)
                        # .LocalNorm('conv2_2_norm', cfg.radius, cfg.alpha, cfg.beta, cfg.bias)
                        .MaxPooling('pool2_2', 1)
-                       .FullyConnected('fc3', 1024)())      
+                       .FullyConnected('fc3', 1024)())
             if cfg.drop_fc3:
                 im_fc3 = tf.nn.dropout(im_fc3, cfg.fc3_drop_rate)
             pc1 = FullyConnected('pc1', pose, 16)
@@ -76,7 +76,7 @@ class GQCNN(ModelDesc):
         fc4 = tf.nn.relu(fc4_im + fc4_pose)
         fc5 = FullyConnected('fc5', fc4, 2)
 
-        return fc5            
+        return fc5
 
     def _build_graph(self, inputs):
         image, pose, label = inputs
@@ -85,8 +85,6 @@ class GQCNN(ModelDesc):
 
         image = (image - cfg.im_mean) / cfg.im_std
         pose = (pose - [cfg.depth_mean, 0]) / [cfg.depth_std, 1]
-
-        print('***\n', type(pose), '\n', pose, '\n***')
 
         logits = self._get_logits(image, pose)
         preds = tf.nn.softmax(logits)
@@ -165,7 +163,7 @@ if __name__ == '__main__':
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
     model = GQCNN()
-    
+
     if args.flops:
         input_desc = [
             InputDesc(tf.float32, [None, cfg.im_height, cfg.im_width, 1], 'input'),

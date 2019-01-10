@@ -88,6 +88,7 @@ class GQCNN(ModelDesc):
 
         logits = self._get_logits(image, pose)
         preds = tf.nn.softmax(logits)
+        preds = tf.identity(preds, name='Softmax')
         accuracy = tf.to_float(tf.nn.in_top_k(preds, label, 1))
         add_moving_summary(tf.reduce_mean(accuracy, name='accuracy'))
 
@@ -107,7 +108,7 @@ class GQCNN(ModelDesc):
         else:
             add_moving_summary(loss, self.cost)
 
-        tf.summary.scalar('loss_step', loss)
+        # tf.summary.scalar('loss_step', loss)
 
     def optimizer(self):
         lr = tf.train.exponential_decay(
@@ -121,7 +122,7 @@ class GQCNN(ModelDesc):
 
 def get_data(train_or_test, batch_size):
     is_train = train_or_test == 'train'
-    ds = Data(cfg.filename, test_set=not is_train, image_wise=False)
+    ds = Data(cfg.data_dir, test_set=not is_train, image_wise=False)
 
     augmentors = []
     ds = BatchData(ds, batch_size, remainder=not is_train)
@@ -150,6 +151,7 @@ def get_config(args, model):
 
 if __name__ == '__main__':
 
+    print(cfg.data_dir)
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', help='comma separated list of GPU(s) to use.', default="1")
     parser.add_argument('--batch_size_per_gpu', help='batch size per gpu', type=int, default=128)

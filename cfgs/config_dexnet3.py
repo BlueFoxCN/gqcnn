@@ -11,9 +11,10 @@ cfg.noise_width = 8
 
 # datapoints
 cfg.filename = 'dexnet2.hdf5'
-cfg.data_dir = '/home/user/Datasets/dexnet/dexnet_3/dexnet_09_13_17/tensors/'
+cfg.data_dir = '/home/user/DexNet/gqcnn/dexnet_09_13_17/tensors/'
 cfg.train_pct = 0.8
 cfg.tot_datapoints = 2759 * 1000 + 60
+# cfg.tot_datapoints = 100 * 1000
 cfg.train_num = int(cfg.tot_datapoints * cfg.train_pct)
 cfg.val_num = cfg.tot_datapoints - cfg.train_num
 
@@ -25,7 +26,7 @@ cfg.val_idxs = np.array(list(set(np.arange(cfg.tot_datapoints)) - set(cfg.train_
 cfg.im_mean = 0.700
 cfg.im_std = 0.032
 cfg.depth_mean = 0.679
-cfg.depth_std = 0.032 
+cfg.depth_std = 0.032
 
 cfg.im_height = 32
 cfg.im_width = 32
@@ -43,7 +44,7 @@ cfg.decay_rate = 0.95
 cfg.momentum_rate = 0.9
 
 # train
-cfg.epoch_num = 5
+cfg.epoch_num = 500
 
 # LocalNorm params
 cfg.radius = 2

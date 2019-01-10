@@ -47,6 +47,7 @@ class Data(RNGDataFlow):
         
         num_1 = idx // 1000
         num_2 = idx % 1000
+
         depth_im = np.load(self.data_dir + 'depth_ims_tf_table_%05d.npz' % num_1)['arr_0'][num_2,...]
         depth = np.load(self.data_dir + 'hand_poses_%05d.npz' % num_1)['arr_0'][num_2,...][2]
         angle = np.load(self.data_dir + 'hand_poses_%05d.npz' % num_1)['arr_0'][num_2,...][3]

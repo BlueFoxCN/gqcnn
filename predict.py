@@ -29,7 +29,7 @@ def predict_image(model_path, images, depths):
 
     os.environ['CUDA_VISIBLE_DEVICES'] = "1"
     sess_init = SaverRestore(model_path)
-    model = GQCNN() 
+    model = GQCNN()
     predict_config = PredictConfig(session_init=sess_init,
                                    model=model,
                                    input_names=["input", "pose"],
@@ -42,7 +42,7 @@ def predict_image(model_path, images, depths):
     # image = np.expand_dims(image, -1)
     # depth = np.array([500], np.float32)
     # import pdb
-    
+
     prediction = predict_func(images, depths)
     # pdb.set_trace()
 
@@ -57,8 +57,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-    
+    os.environ['CUDA_VISIBLE_DEVICES'] = "1"
+
     if not os.path.exists(args.save_dir):
         os.mkdir(args.save_dir)
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     # gqcnn_imgs = (gqcnn_imgs - img_mean) / 0.032
     # gqcnn_depths = (gqcnn_depths - np.mean(gqcnn_depths)) / 0.032
     pdb.set_trace()
-    prediction = predict_image(args.model_path, gqcnn_imgs, gqcnn_depths) 
+    prediction = predict_image(args.model_path, gqcnn_imgs, gqcnn_depths)
     pdb.set_trace()
     a = prediction
 
